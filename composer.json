@@ -1,6 +1,6 @@
 {
     "name": "opaige/opaige-php",
-    "description": "The Opaige API for PHP: visa requirements, file review, forms, bookings, lodgements and webhooks.",
+    "description": "The Opaige API for PHP: visa requirements, file review, forms, bookings, government filing and webhooks.",
     "type": "library",
     "license": "MIT",
     "homepage": "https://opaige.com/developers",
