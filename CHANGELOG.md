@@ -2,9 +2,9 @@
 
 This library follows [semantic versioning](https://semver.org). The API is versioned by date; see the README.
 
-## Unreleased
+## 1.1.2 (2026-11-09)
 
-- The repository moved to the Opaige organisation: github.com/opaige. Old links redirect.
+- The repository moved to the Opaige organisation: github.com/opaige. Old links redirect. Same code as 1.1.1.
 - README: authentication, every method by area, errors and their codes, retries, rate limits, webhooks, versions and support.
 - Runnable examples in `examples/`: a quick start against the public test key, and webhook verification.
 - SECURITY.md: how to report a vulnerability and how to use the library safely.
