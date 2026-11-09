@@ -22,8 +22,8 @@
         }
     },
     "support": {
-        "source": "https://github.com/HideOsLite/opaige-php",
-        "issues": "https://github.com/HideOsLite/opaige-php/issues",
+        "source": "https://github.com/opaige/opaige-php",
+        "issues": "https://github.com/opaige/opaige-php/issues",
         "docs": "https://opaige.com/developers"
     }
 }
