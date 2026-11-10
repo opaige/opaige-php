@@ -69,6 +69,18 @@ abstract class Operations
         return $this->http()->request('POST', '/documents', ['format' => $format], $body, null, null, []);
     }
 
+    /** Your government fee balance, and what each route asks for. GET /fee-balance */
+    public function getFeeBalance(): mixed
+    {
+        return $this->http()->request('GET', '/fee-balance', [], null, null, null, []);
+    }
+
+    /** Ask to add to the balance by bank transfer; a person confirms the money before it counts. POST /fee-balance/top-ups */
+    public function createFeeTopUp(array $body, ?string $idempotencyKey = null): mixed
+    {
+        return $this->http()->request('POST', '/fee-balance/top-ups', [], $body, null, null, [], $idempotencyKey);
+    }
+
     /** Every inconsistency in a whole visa file. POST /file-review */
     public function reviewFile(?array $body = null, ?string $file = null, string $filename = 'file.pdf', array $fields = [], ?string $idempotencyKey = null): mixed
     {
@@ -103,42 +115,6 @@ abstract class Operations
     public function listInvoices(string|int|null $status = null, string|int|null $from = null, string|int|null $to = null): mixed
     {
         return $this->http()->request('GET', '/invoices', ['status' => $status, 'from' => $from, 'to' => $to], null, null, null, []);
-    }
-
-    /** Your lodgements, newest first. GET /lodgements */
-    public function listLodgements(): mixed
-    {
-        return $this->http()->request('GET', '/lodgements', [], null, null, null, []);
-    }
-
-    /** Fill a visa application on the government portal, parked before the declarations (au-600, au-500) or the photo and signature (us-ds160). POST /lodgements */
-    public function createLodgement(array $body, ?string $idempotencyKey = null): mixed
-    {
-        return $this->http()->request('POST', '/lodgements', [], $body, null, null, [], $idempotencyKey);
-    }
-
-    /** Where a lodgement stands, with the government reference once there is one. GET /lodgements/{id} */
-    public function getLodgement(string $id): mixed
-    {
-        return $this->http()->request('GET', '/lodgements/' . rawurlencode($id), [], null, null, null, []);
-    }
-
-    /** Attach supporting documents. POST /lodgements/{id}/documents */
-    public function attachLodgementDocuments(string $id, array $body): mixed
-    {
-        return $this->http()->request('POST', '/lodgements/' . rawurlencode($id) . '/documents', [], $body, null, null, []);
-    }
-
-    /** Lodge and pay the government fee (requires authorize: true). POST /lodgements/{id}/submit */
-    public function submitLodgement(string $id, array $body, ?string $idempotencyKey = null): mixed
-    {
-        return $this->http()->request('POST', '/lodgements/' . rawurlencode($id) . '/submit', [], $body, null, null, [], $idempotencyKey);
-    }
-
-    /** The questions a DS-160 lodgement answers, as a case asks them. GET /lodgements/questions */
-    public function lodgementQuestions(string|int|null $visa = null, string|int|null $purpose = null): mixed
-    {
-        return $this->http()->request('GET', '/lodgements/questions', ['visa' => $visa, 'purpose' => $purpose], null, null, null, []);
     }
 
     /** Who on a flight needs a visa, and by when to file. POST /passengers/check */
@@ -201,6 +177,72 @@ abstract class Operations
         return $this->http()->request('GET', '/rules/notices', ['since' => $since], null, null, null, []);
     }
 
+    /** Prepare a skilled application (Australia 189/190/491, Canada Express Entry, Germany EU Blue Card, UK Skilled Worker): every field filled or marked missing, the claim worked from what the profile proves, each fact tied to its document (billed as one form). POST /skilled/applications */
+    public function prepareSkilledApplication(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/applications', [], $body, null, null, []);
+    }
+
+    /** Check EU Blue Card eligibility for Germany (qualification, job offer, salary threshold). POST /skilled/blue-card-check */
+    public function checkBlueCard(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/blue-card-check', [], $body, null, null, []);
+    }
+
+    /** The documents a Germany EU Blue Card application asks for, tailored to the candidate. POST /skilled/blue-card-checklist */
+    public function blueCardChecklist(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/blue-card-checklist', [], $body, null, null, []);
+    }
+
+    /** Score a candidate on Canada's Express Entry Comprehensive Ranking System (CRS), out of 1200. POST /skilled/crs-check */
+    public function checkCrsPoints(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/crs-check', [], $body, null, null, []);
+    }
+
+    /** The documents an Australian skilled application (189, 190, 491) asks for, tailored to the applicant. POST /skilled/document-checklist */
+    public function skilledDocumentChecklist(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/document-checklist', [], $body, null, null, []);
+    }
+
+    /** The documents a Canada Express Entry application (FSW, CEC, FST) asks for, tailored to the candidate. POST /skilled/express-entry-checklist */
+    public function expressEntryChecklist(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/express-entry-checklist', [], $body, null, null, []);
+    }
+
+    /** Check US H-1B eligibility: specialty occupation, degree or 3-for-1 equivalency, prevailing wage level, cap pool and weighted-selection entries. POST /skilled/h1b-check */
+    public function checkH1b(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/h1b-check', [], $body, null, null, []);
+    }
+
+    /** The documents a US H-1B petition is built from, tailored to the case. POST /skilled/h1b-checklist */
+    public function h1bChecklist(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/h1b-checklist', [], $body, null, null, []);
+    }
+
+    /** Score a person on Australia's General Skilled Migration points test (subclasses 189, 190, 491). POST /skilled/points-check */
+    public function checkSkilledPoints(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/points-check', [], $body, null, null, []);
+    }
+
+    /** Check UK Skilled Worker eligibility (sponsor, skill level, and the higher of the general threshold and the going rate). POST /skilled/uk-skilled-worker-check */
+    public function checkSkilledWorker(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/uk-skilled-worker-check', [], $body, null, null, []);
+    }
+
+    /** The documents a UK Skilled Worker application asks for, tailored to the candidate. POST /skilled/uk-skilled-worker-checklist */
+    public function ukSkilledWorkerChecklist(array $body): mixed
+    {
+        return $this->http()->request('POST', '/skilled/uk-skilled-worker-checklist', [], $body, null, null, []);
+    }
+
     /** Admitted students, with the visa stage where each agreed to share it. GET /students */
     public function listStudents(): mixed
     {
@@ -223,6 +265,72 @@ abstract class Operations
     public function studentFundsCheck(array $body): mixed
     {
         return $this->http()->request('POST', '/students/funds-check', [], $body, null, null, []);
+    }
+
+    /** Your submissions, newest first. GET /submissions */
+    public function listSubmissions(): mixed
+    {
+        return $this->http()->request('GET', '/submissions', [], null, null, null, []);
+    }
+
+    /** Fill a visa application on the government portal, stopping before the declarations (au-600, au-500), at the applicant's signature (us-ds160), or completed with its reference (fr-schengen). POST /submissions */
+    public function createSubmission(array $body, ?string $idempotencyKey = null): mixed
+    {
+        return $this->http()->request('POST', '/submissions', [], $body, null, null, [], $idempotencyKey);
+    }
+
+    /** Where a submission stands, with the government reference once there is one. GET /submissions/{id} */
+    public function getSubmission(string $id): mixed
+    {
+        return $this->http()->request('GET', '/submissions/' . rawurlencode($id), [], null, null, null, []);
+    }
+
+    /** us-ds160 with code_by partner: the US site's security code your staff read in code.image. POST /submissions/{id}/code */
+    public function sendSubmissionCode(string $id, array $body): mixed
+    {
+        return $this->http()->request('POST', '/submissions/' . rawurlencode($id) . '/code', [], $body, null, null, []);
+    }
+
+    /** Attach supporting documents. POST /submissions/{id}/documents */
+    public function attachSubmissionDocuments(string $id, array $body): mixed
+    {
+        return $this->http()->request('POST', '/submissions/' . rawurlencode($id) . '/documents', [], $body, null, null, []);
+    }
+
+    /** us-ds160: the US site's own PDF once submitted: the confirmation, or the full application as submitted. GET /submissions/{id}/filed/{kind} */
+    public function getFiledDocument(string $id, string $kind): mixed
+    {
+        return $this->http()->request('GET', '/submissions/' . rawurlencode($id) . '/filed/' . rawurlencode($kind), [], null, null, null, []);
+    }
+
+    /** Submit and pay the government fee (requires authorize: true). POST /submissions/{id}/submit */
+    public function submitAndPay(string $id, array $body, ?string $idempotencyKey = null): mixed
+    {
+        return $this->http()->request('POST', '/submissions/' . rawurlencode($id) . '/submit', [], $body, null, null, [], $idempotencyKey);
+    }
+
+    /** us-ds160: a hosted link where the applicant completes what you do not hold, with their passport and photo, and signs. POST /submissions/intakes */
+    public function createIntake(array $body): mixed
+    {
+        return $this->http()->request('POST', '/submissions/intakes', [], $body, null, null, []);
+    }
+
+    /** Whether the applicant has finished, and the submission it became. GET /submissions/intakes/{id} */
+    public function getIntake(string $id): mixed
+    {
+        return $this->http()->request('GET', '/submissions/intakes/' . rawurlencode($id), [], null, null, null, []);
+    }
+
+    /** The questions a DS-160 submission answers, as a case asks them. GET /submissions/questions */
+    public function submissionQuestions(string|int|null $visa = null, string|int|null $purpose = null): mixed
+    {
+        return $this->http()->request('GET', '/submissions/questions', ['visa' => $visa, 'purpose' => $purpose], null, null, null, []);
+    }
+
+    /** us-ds160: open an application already on the US site with its recovery details and print its confirmation again (not billed). POST /submissions/retrieve */
+    public function retrieveDs160(array $body, ?string $idempotencyKey = null): mixed
+    {
+        return $this->http()->request('POST', '/submissions/retrieve', [], $body, null, null, [], $idempotencyKey);
     }
 
     /** Trips and where each case stands. GET /trips */

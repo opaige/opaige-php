@@ -10,7 +10,7 @@ namespace Opaige;
  */
 final class Requester
 {
-    public const VERSION = '1.1.0';
+    public const VERSION = '2.0.0';
     private const RETRY = [429, 500, 502, 503, 504];
     private string $base;
 
